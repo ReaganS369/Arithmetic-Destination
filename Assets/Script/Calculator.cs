@@ -1,70 +1,74 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 public class Calculator : MonoBehaviour
 {
+    public TMP_Text resultText;
 
-    public Text resultText;
-    private float operand1 = 0f;
-    private float operand2 = 0f;
-    private float result = 0f;
+    private float result;
+    private float input1;
+    private float input2;
     private string operation;
 
-    private void Start()
-    {
-        resultText.resizeTextForBestFit = true;
-    }
-    // Called when a number button is clicked
-    public void NumberButtonClick(string number)
+    public void AddNumber(int number)
     {
         if (operation == null)
         {
-            operand1 = operand1 * 10f + float.Parse(number);
-            resultText.text = operand1.ToString();
+            input1 += number;
+            resultText.text = input1.ToString();
         }
         else
         {
-            operand2 = operand2 * 10f + float.Parse(number);
-            resultText.text = operand2.ToString();
-        } // append new number and space to existing text
+            input2 += number;
+            resultText.text = input1.ToString() + operation + input2.ToString();
+        }
+        result = 0;
     }
 
-    // Called when an operator button is clicked
-    public void OperatorButtonClick(string op)
+    public void SetOperation(string op)
     {
-        operation = op;
-        resultText.text = operation; // append operator and spaces to existing text
+        if (input1 != 0 && operation == null)
+        {
+            operation = op;
+            resultText.text += operation;
+        }
     }
 
-    // Called when the equals button is clicked
-    public void EqualsButtonClick()
+    public void Calculate()
     {
-        if (operation == "+")
+        switch (operation)
         {
-            result = operand1 + operand2;
+            case "+":
+                result = input1 + input2;
+                break;
+            case "-":
+                result = input1 - input2;
+                break;
+            case "×":
+                result = input1 * input2;
+                break;
+            case "÷":
+                result = input1 / input2;
+                break;
         }
-        else if (operation == "-")
-        {
-            result = operand1 - operand2;
-        }
-        else if (operation == "x")
-        {
-            result = operand1 * operand2;
-        }
-        else if (operation == "/")
-        {
-            result = operand1 / operand2;
-        }
+
         resultText.text = result.ToString();
+
+        input1 = result;
+        input2 = 0;
+        operation = null;
     }
 
-    // Called when the clear button is clicked
-    public void ClearButtonClick()
+    public void Delete()
     {
-        operand1 = 0f;
-        operand2 = 0f;
-        result = 0f;
-        operation = null;
-        resultText.text = "";
+        if (resultText.text.Length > 0)
+        {
+            resultText.text = resultText.text.Substring(0, resultText.text.Length - 1);
+            if (resultText.text == "")
+            {
+                resultText.text = "0";
+            }
+        }
     }
 }
+
