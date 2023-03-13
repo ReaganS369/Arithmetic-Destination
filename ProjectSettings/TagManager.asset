@@ -4,10 +4,11 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - Trap
+  - Wall
+  - Traps
+  - TrapStub
   - Tiles
-  - BR
-  - BC
+  - Trap
   layers:
   - Default
   - TransparentFX
@@ -45,15 +46,18 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: BackGround
-    uniqueID: 3670738729
+  - name: tiles
+    uniqueID: 2135178455
     locked: 0
-  - name: Traps
-    uniqueID: 1570363603
+  - name: trap
+    uniqueID: 3178561995
     locked: 0
-  - name: Player
-    uniqueID: 2403593155
+  - name: wall
+    uniqueID: 620426779
     locked: 0
-  - name: Wall
-    uniqueID: 822776393
+  - name: player
+    uniqueID: 626291131
+    locked: 0
+  - name: finish
+    uniqueID: 2822123911
     locked: 0

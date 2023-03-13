@@ -1,77 +1,57 @@
 using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
+using UnityEngine.Tilemaps;
 
 public class Player : MonoBehaviour
 {
-    public float stepSize = 1.0f; // the distance between tiles
-    public KeyCode moveButtonX = KeyCode.X; // the button for moving horizontally
-    public KeyCode moveButtonY = KeyCode.Y; // the button for moving vertically
+    [SerializeField] private Tilemap tilemap;
+    [SerializeField] private float tileSize = 1f;
 
-    private int currentTileIndex = 0; // the current tile index
-    private Transform[] tiles; // an array of all the tiles on the board
+    private Vector3Int currentTile;
+    private bool enterToggle = false;
 
-    private void Start()
+    void Start()
     {
-        // get all the tiles on the board
-        GameObject board = GameObject.Find("Board"); // replace "Board" with the name of your board object
-        tiles = new Transform[board.transform.childCount * 10]; // create an array with space for all the BCs
-        int tileIndex = 0;
-        for (int i = 0; i < board.transform.childCount; i++)
+        currentTile = tilemap.WorldToCell(transform.position);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
         {
-            Transform child = board.transform.GetChild(i);
-            if (child.CompareTag("BR"))
+            if (enterToggle)
             {
-                // get all the BCs for this row
-                for (int j = 0; j < child.childCount; j++)
-                {
-                    Transform bc = child.GetChild(j);
-                    if (bc.CompareTag("BC"))
-                    {
-                        // add the BC transform to the array
-                        tiles[tileIndex] = bc;
-                        tileIndex++;
-                    }
-                }
+                Move(new Vector3Int(0, -1, 0)); // move up
+            }
+            else
+            {
+                Move(new Vector3Int(1, 0, 0)); // move right
             }
         }
-
-        // move the player to the starting tile
-        transform.position = tiles[currentTileIndex].position;
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            enterToggle = !enterToggle; // toggle direction
+        }
     }
-
-
-    private void Update()
+    private void Move(Vector3Int direction)
+{
+    Vector3Int targetTile = currentTile + direction;
+    
+    // Check for collision with walls
+    Collider2D[] colliders = Physics2D.OverlapCircleAll(tilemap.GetCellCenterWorld(targetTile), tileSize / 2);
+    foreach (Collider2D collider in colliders)
     {
-        // move the player when the assigned button is pressed
-        if (Input.GetKeyDown(moveButtonX))
+        if (collider.CompareTag("Wall"))
         {
-            // move horizontally
-            Move(1, 0);
-        }
-        else if (Input.GetKeyDown(moveButtonY))
-        {
-            // move vertically
-            Move(0, 1);
+            return;
         }
     }
-
-    private void Move(int x, int y)
+    
+    // Move to the target tile if there is no wall in the way
+    if (tilemap.HasTile(targetTile))
     {
-        // calculate the new tile index based on the input and the current tile index
-        int newIndex = currentTileIndex + x + y * 10; // add 10 for each row
-
-        // check if the new index is within the bounds of the array
-        if (newIndex >= 0 && newIndex < tiles.Length)
-        {
-            // update the current tile index
-            currentTileIndex = newIndex;
-
-            // set the new tile as the player's parent
-            transform.SetParent(tiles[currentTileIndex]);
-
-            // move the player to the new tile
-            transform.localPosition = Vector3.zero;
-        }
+        transform.position = tilemap.GetCellCenterWorld(targetTile);
+        currentTile = targetTile;
     }
+}
+
 }
