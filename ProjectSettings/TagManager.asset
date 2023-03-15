@@ -55,9 +55,9 @@ TagManager:
   - name: wall
     uniqueID: 620426779
     locked: 0
-  - name: player
-    uniqueID: 626291131
-    locked: 0
   - name: finish
     uniqueID: 2822123911
+    locked: 0
+  - name: player
+    uniqueID: 626291131
     locked: 0

@@ -45,9 +45,19 @@ public class Player : MonoBehaviour
             return;
         }
     }
-    
-    // Move to the target tile if there is no wall in the way
-    if (tilemap.HasTile(targetTile))
+        // Check if the target tile is behind a wall
+        Vector3 start = transform.position;
+        Vector3 end = tilemap.GetCellCenterWorld(targetTile);
+        RaycastHit2D[] hits = Physics2D.LinecastAll(start, end);
+        foreach (RaycastHit2D hit in hits)
+        {
+            if (hit.collider.CompareTag("Wall"))
+            {
+                return;
+            }
+        }
+        // Move to the target tile if there is no wall in the way
+        if (tilemap.HasTile(targetTile))
     {
         transform.position = tilemap.GetCellCenterWorld(targetTile);
         currentTile = targetTile;
