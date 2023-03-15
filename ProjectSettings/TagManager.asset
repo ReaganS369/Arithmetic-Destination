@@ -5,10 +5,11 @@ TagManager:
   serializedVersion: 2
   tags:
   - Wall
-  - Traps
   - TrapStub
   - Tiles
   - Trap
+  - Water
+  - PitTrap
   layers:
   - Default
   - TransparentFX

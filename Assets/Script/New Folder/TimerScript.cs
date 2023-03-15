@@ -4,13 +4,13 @@ using System.Collections;
 
 public class TimerScript : MonoBehaviour
 {
-    [SerializeField] private float timeRemaining = 60; // Set the initial time remaining in seconds
-    [SerializeField] private Text timerText;
-    public bool timerIsRunning = true; // Whether the timer should be running or not
-    [SerializeField] private GameObject OverMenuUI;
+    [SerializeField] private float timeRemaining = 60; 
+    public bool timerIsRunning = true; 
     [SerializeField] private float startBlink = 5f;
     [SerializeField] private float blinkSpeed = 0.5f;
     [SerializeField] private Outline outline;
+
+    [SerializeField] private GameObject player;
 
     private IEnumerator Blink()
     {
@@ -22,13 +22,6 @@ public class TimerScript : MonoBehaviour
         }
         outline.enabled = true;
     }
-
-    void GameOver()
-    {
-        OverMenuUI.SetActive(true);
-        timerIsRunning = false;
-    }
-
     void Update()
     {
         if (timerIsRunning)
@@ -38,7 +31,6 @@ public class TimerScript : MonoBehaviour
             {
                 timeRemaining = 0;
                 timerIsRunning = false;
-                GameOver();
             }
             UpdateTimerText();
             if (timeRemaining <= startBlink)
@@ -53,6 +45,5 @@ public class TimerScript : MonoBehaviour
         int minutes = Mathf.FloorToInt(timeRemaining / 60);
         int seconds = Mathf.FloorToInt(timeRemaining % 60);
         int milliseconds = Mathf.FloorToInt((timeRemaining - Mathf.FloorToInt(timeRemaining)) * 99);
-        timerText.text = string.Format("{0:00}:{1:00}", seconds, milliseconds);
     }
 }

@@ -7,27 +7,42 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 
 public class MovementCalculation : MonoBehaviour
-{
+{   
+    //UI management
     [SerializeField] private GameObject gameOverMenuUI;
     [SerializeField] private GameObject levelCompleteMenuUI;
 
+    //calculator
     [SerializeField] private int maxDigits = 4;
     [SerializeField] private TextMeshProUGUI displayText;
     [SerializeField] private Text resultText;
     [SerializeField] private Text detector;
 
+    //character animation
     [SerializeField] private Animator anim;
 
+    //character sound
     [SerializeField] private AudioSource moveSound;
     [SerializeField] private AudioSource deathSound;
+    [SerializeField] private AudioSource stubDeathSound;
     [SerializeField] private AudioSource finishSound;
 
+    //board
     [SerializeField] private Tilemap tilemap;
 
+    //direction detector
     [SerializeField] private Text upTilesText;
     [SerializeField] private Text rightTilesText;
     [SerializeField] private Text downTilesText;
     [SerializeField] private Text leftTilesText;
+
+    //timer
+    [SerializeField] private float timeRemaining = 60; 
+    [SerializeField] private Text timerText;
+    [SerializeField] private float startBlink = 5f;
+    [SerializeField] private float blinkSpeed = 0.5f;
+    [SerializeField] private Outline outline;
+    private bool timerIsRunning = true;
 
     private float firstNumber;
     private float secondNumber;
@@ -53,16 +68,35 @@ public class MovementCalculation : MonoBehaviour
     {
         UpdateCurrentTile();
 
+        //count tiles
         CountTiles(new Vector3Int(0, 1, 0), upTilesText); // up
         CountTiles(new Vector3Int(1, 0, 0), rightTilesText); // right
         CountTiles(new Vector3Int(0, -1, 0), downTilesText); // down
         CountTiles(new Vector3Int(-1, 0, 0), leftTilesText); // left
+
+        //tume start
+        if (timerIsRunning)
+        {
+            timeRemaining -= Time.deltaTime;
+            if (timeRemaining <= 0)
+            {
+                timeRemaining = 0;
+                timerIsRunning = false;
+                DeathMenu();
+            }
+            UpdateTimerText();
+            if (timeRemaining <= startBlink)
+            {
+                StartCoroutine(Blink());
+            }
+        }
     }
 
     private void DeathMenu()
     {
         gameOver = true;
         gameOverMenuUI.SetActive(true);
+        timerIsRunning = false;
     }
 
     private void LevelCompleteMenu()
@@ -79,6 +113,26 @@ public class MovementCalculation : MonoBehaviour
     private void UpdateCurrentTile()
     {
         currentTile = tilemap.WorldToCell(transform.position);
+    }
+
+    private IEnumerator Blink()
+    {
+        outline.enabled = true;
+        while (timerIsRunning && timeRemaining <= startBlink)
+        {
+            outline.enabled = !outline.enabled;
+            yield return new WaitForSeconds(blinkSpeed);
+        }
+        outline.enabled = true;
+    }
+
+    //update time
+    void UpdateTimerText()
+    {
+        int minutes = Mathf.FloorToInt(timeRemaining / 60);
+        int seconds = Mathf.FloorToInt(timeRemaining % 60);
+        int milliseconds = Mathf.FloorToInt((timeRemaining - Mathf.FloorToInt(timeRemaining)) * 99);
+        timerText.text = string.Format("{0:00}:{1:00}", seconds, milliseconds);
     }
 
     private void CountTiles(Vector3Int direction, Text text)
@@ -137,20 +191,27 @@ public class MovementCalculation : MonoBehaviour
         RaycastHit2D[] hits = Physics2D.LinecastAll(start, end);
         foreach (RaycastHit2D hit in hits)
         {
-            if (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("water"))
+            if (hit.collider.CompareTag("Wall") || hit.collider.CompareTag("Water"))
             {
                 return;
             }
             if (hit.collider.CompareTag("Trap"))
             {
+                timerIsRunning = false;
                 anim.SetTrigger("death");
                 deathSound.Play();
             }
+            if (hit.collider.CompareTag("TrapStub"))
+            {
+                timerIsRunning = false;
+                anim.SetTrigger("deathStub");
+                //stubDeathSound.Play();
+            }
             if (hit.collider.CompareTag("Finish"))
             {
-                anim.SetTrigger("finish");
+                timerIsRunning = false;
                 finishSound.Play();
-                levelCompleteMenuUI.SetActive(true);
+                Invoke("LevelCompleteMenu", 2f);
             }
         }
 
@@ -230,7 +291,7 @@ public class MovementCalculation : MonoBehaviour
             DChange();
             return;
         }
-        if (firstNumber == 0 && secondNumber == 0)
+        if (operation == "" || firstNumber == 0 && secondNumber == 0)
         {
             displayText.text = "0";
             return;
