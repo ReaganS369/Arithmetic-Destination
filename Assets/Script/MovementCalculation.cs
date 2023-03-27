@@ -280,7 +280,7 @@ public class MovementCalculation : MonoBehaviour
     public void Operation(string op)
     {
         operation = op;
-        displayText.text = firstNumber.ToString() + operation + secondNumber.ToString();
+        displayText.text = firstNumber.ToString() + operation ;
     }
 
     public void Equal()
