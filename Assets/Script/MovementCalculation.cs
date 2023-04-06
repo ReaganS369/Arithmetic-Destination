@@ -235,7 +235,7 @@ public class MovementCalculation : MonoBehaviour
     public void Delete()
     {//error in delete firstNumber
         int length = displayText.text.Length;
-        if (length > 0)
+        if (length >= 0)
         {
             displayText.text = displayText.text.Substring(0, length - 1);
             if (operation == "")
@@ -245,6 +245,7 @@ public class MovementCalculation : MonoBehaviour
             }
             else
             {
+                //firstNumber = Mathf.Floor(firstNumber / 10);
                 secondNumber = Mathf.Floor(secondNumber / 10);
                 result = CalculateResult();
                 resultText.text = Mathf.Ceil(result).ToString();
