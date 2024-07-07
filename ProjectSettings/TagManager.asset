@@ -5,11 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - Wall
-  - TrapStub
+  - Water
   - Tiles
   - Trap
-  - Water
-  - PitTrap
+  - TrapStub
   layers:
   - Default
   - TransparentFX
@@ -47,18 +46,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
-  - name: tiles
-    uniqueID: 2135178455
+  - name: New Layer 1
+    uniqueID: 4059214815
     locked: 0
-  - name: trap
-    uniqueID: 3178561995
+  - name: New Layer 2
+    uniqueID: 2234661527
     locked: 0
-  - name: wall
-    uniqueID: 620426779
-    locked: 0
-  - name: finish
-    uniqueID: 2822123911
-    locked: 0
-  - name: player
-    uniqueID: 626291131
+  - name: New Layer 3
+    uniqueID: 1740150099
     locked: 0

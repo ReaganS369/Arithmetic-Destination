@@ -233,7 +233,7 @@ public class MovementCalculation : MonoBehaviour
     }
 
     public void Delete()
-    {//error in delete firstNumber
+    {
         int length = displayText.text.Length;
         if (length >= 0)
         {
@@ -245,10 +245,16 @@ public class MovementCalculation : MonoBehaviour
             }
             else
             {
-                //firstNumber = Mathf.Floor(firstNumber / 10);
-                secondNumber = Mathf.Floor(secondNumber / 10);
-                result = CalculateResult();
-                resultText.text = Mathf.Ceil(result).ToString();
+                if (displayText.text.EndsWith(operation))
+                {
+                    operation = "";
+                }
+                else
+                {
+                    secondNumber = Mathf.Floor(secondNumber / 10);
+                    result = CalculateResult();
+                    resultText.text = Mathf.Ceil(result).ToString();
+                }
             }
         }
     }
